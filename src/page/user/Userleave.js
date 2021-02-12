@@ -39,7 +39,8 @@ const Userleave = () => {
     return () => {
       unSubscribe()
     }
-  })
+  },[])
+
 
   return (
     <div>
@@ -64,7 +65,7 @@ const Userleave = () => {
                 <div className="card">
                   <div className="card-header ">
                     <div className="d-flex justify-content-between">
-                      <h3 className="m-0 text-dark" onClick={()=>{console.log(dataLeave)}}>รายการลา</h3>
+                      <h3 className="m-0 text-dark" >รายการลา</h3>
                       <Form />
                     </div>
                   </div>

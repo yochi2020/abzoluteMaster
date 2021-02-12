@@ -182,9 +182,10 @@ export default function Leavelist(props) {
                         ))
                     }
                 </td>
-                <td>{testt.map((data, index) => <div key={index}>{data.type_leave_name}</div>)}</td>
+                <td>{appoveLeave.map((data,index)=><div key={index}>{data.leave_date}</div>)}</td>
                 <td>{appoveLeave.map((data, index) => (<div key={index}>{data.leave_start}</div>))}</td>
                 <td>{appoveLeave.map((data, index) => (<div key={index}>{data.amount}</div>))}</td>
+                <td>{testt.map((data, index) => <div key={index}>{data.type_leave_name}</div>)}</td>
                 <td>{appoveLeave.map((data, index) => (<div key={index}>{data.reson}</div>))}</td>
                 <td>
                     <span className="badge badge-pill badge-dark">{appove.status}</span>

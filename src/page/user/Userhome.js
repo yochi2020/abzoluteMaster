@@ -111,7 +111,7 @@ const Userleave = () => {
                           <th scope="col">วันที่ลา</th>
                           <th scope="col">จำนวนวัน</th>
                           <th scope="col">ประเภทการลา</th>
-                          <th scope="col">หมายเหตุ</th>
+                          <th scope="col">เหตุผล</th>
                           <th scope="col">สถานะ</th>
                         </tr>
                       </thead>

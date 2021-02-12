@@ -21,13 +21,13 @@ const Form = () => {
     const refTypeLeave = firestore.collection("type_leave")
     const refUser = firestore.collection("user")
     const refQuota = firestore.collection("quota")
-
+    const refAppove =firestore.collection("appove")
     const refLeave = firestore.collection("leave")
 
     useEffect(() => {
 
         // info user
-        const authUnsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+        auth.onAuthStateChanged((firebaseUser) => {
             if (!!firebaseUser) {
                 refUser.doc(firebaseUser.uid).onSnapshot(doc => {
                     setUser({ ...doc.data(), id: doc.id })
@@ -36,7 +36,7 @@ const Form = () => {
         })
 
         // find TypeLeave all
-        const typeleavesubscribe = refTypeLeave.onSnapshot(doc => {
+        refTypeLeave.onSnapshot(doc => {
             let tempArrayTypeLeave = []
             doc.forEach(data => {
                 tempArrayTypeLeave = [
@@ -51,7 +51,7 @@ const Form = () => {
             setTypeLeave(tempArrayTypeLeave)
         })
 
-        const quotasubscribe = refQuota.onSnapshot(doc => {
+        refQuota.onSnapshot(doc => {
             let tempArrayQuota = []
             doc.forEach(data => {
                 tempArrayQuota = [
@@ -72,10 +72,10 @@ const Form = () => {
         const quotaUser = quota.filter(data => data.uid === user.id)
         setQuotaUser(quotaUser)
 
+        
 
 
-
-    }, [user])
+    },[user])
 
     const fomatDate = (e) => {
         let leaveDate = new Date()
@@ -109,23 +109,21 @@ const Form = () => {
         document.getElementById("myReson").value=""
     }
 
-    const submitData=()=>{
-        refLeave.add(data)
+    const submitData= ()=>{
+         refLeave.add(data)
         .then((result)=>{
-            clearData()
-            let ref =firestore.collection("appove");
-            const leave_id=result.id
-            let obj={
-                leave_id:leave_id,
+            let obj=  {
+                leave_id:result.id,
                 leave_appove:"",
                 hr_appove:"",
                 leave_remark:"",
                 hr_remark:"",
                 status:"",
             }
-            ref.add(obj).then(()=>{
+            refAppove.add(obj).then(()=>{
                 console.log("success")
             }).catch(err=>{console.log(err)})
+            clearData()
         }).catch(err=>{console.log(err)})
     }
     return (

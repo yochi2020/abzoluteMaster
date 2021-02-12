@@ -63,10 +63,11 @@ const Admin = () => {
                         <tr>
                           <th scope="col">ชื่อพนักงาน</th>
                           <th scope="col">ข้อมูลส่วนตัว</th>
-                          <th scope="col">การลา</th>
+                          <th scope="col">วันที่แจ้ง</th>
                           <th scope="col">วันที่ลา</th>
                           <th scope="col">จำนวนวัน</th>
-                          <th scope="col">หมายเหตุ</th>
+                          <th scope="col">ประเภทการลา</th>
+                          <th scope="col">เหตุผล</th>
                           <th scope="col">สถานะ</th>
                           <th scope="col">จัดการ</th>
                         </tr>

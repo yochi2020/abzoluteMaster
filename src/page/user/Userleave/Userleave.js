@@ -1,36 +1,42 @@
 import React, { useEffect, useState } from 'react'
-import { firestore, auth } from '../../../firebase/config'
+import { firestore } from '../../../firebase/config'
 export default function Userleave(props) {
-    const [typeLeave, setTypeLeave] = useState([])
-    const [appove,setAppove]=useState([])
+    const [leaveUser,setLeaveUser]=useState(props.data) // data leave user
+    const [typeLeaveUser,setTypeLeaveUser]=useState([]) // type_leave of user
+    const [appoveUser,setAppoveUser]=useState([])   //appove of user
+    const refAppove =firestore.collection("appove")
     const refTypeLeave = firestore.collection("type_leave")
-    const refAppove = firestore.collection("appove")
-    const refLeave = firestore.collection('leave')
+    const [status,setStatus]=useState([])
     useEffect(() => {
-        refTypeLeave.onSnapshot(doc => {
-            let tempTypeLeave = []
-            doc.forEach(data => {
-                tempTypeLeave = [
-                    ...tempTypeLeave,
+        //find type_leave of user
+        refTypeLeave.onSnapshot(doc=>{
+            let tempArrayTypeLeave = []
+            doc.forEach(data=>{
+                tempArrayTypeLeave=[
+                    ...tempArrayTypeLeave,
                     {
-                        id_typeleave: data.id,
-                        typeleavename: data.data().type_leave_name
-
+                        type_leave_id:data.id,
+                        type_leave_name:data.data().type_leave_name
                     }
                 ]
             })
-            setTypeLeave(tempTypeLeave)
+
+            //find type_leave of user
+            let typeLeaveOfUser = tempArrayTypeLeave.find(data=>(data.type_leave_id===leaveUser.type_leave_id))
+            setTypeLeaveUser(typeLeaveOfUser)
         })
 
-        refAppove.onSnapshot(doc => {
-            let tempAppove = []
-            doc.forEach(data => {
-                tempAppove = [
-                    ...tempAppove,
+
+        //find appove of user
+        refAppove.onSnapshot(doc=>{
+            let tempArrayAppove = []
+            doc.forEach(data=>{
+                tempArrayAppove=[
+                    ...tempArrayAppove,
                     {
-                        appove_id:data.id,
+                        id_appove:data.id,
                         leave_id:data.data().leave_id,
-                        hr_appove: data.data().hr_appove,
+                        hr_appove:data.data().hr_appove,
                         hr_remark:data.data().hr_remark,
                         leave_appove:data.data().leave_appove,
                         leave_remark:data.data().leave_remark,
@@ -38,16 +44,11 @@ export default function Userleave(props) {
                     }
                 ]
             })
-            setAppove(tempAppove)
+            const appoveOfUser =tempArrayAppove.find(data=>data.leave_id===leaveUser.leave_id)
+            setAppoveUser(appoveOfUser)
+            setStatus(appoveUser)
         })
-    },)
-
-    // หาTypeLeave
-    const findTypeLeave = typeLeave.find(data => (
-        data.id_typeleave === props.data.type_leave_id
-    ))
-    const test = [{ ...findTypeLeave }]
-
+    })
 
 
     const handleEdit = () => {
@@ -56,29 +57,24 @@ export default function Userleave(props) {
 
     }
     const handleDelete =  () => {
-        const findAppove = appove.find(data=>(
-            data.leave_id===props.data.leave_id
-        ))
-        
-        refAppove.doc(findAppove.appove_id).delete()
-        .then(()=>{
-            refLeave.doc(findAppove.leave_id).delete()
-        .then(()=>{
-            window.location.reload()
-        }).catch(err=>console.log(err))
-        }).catch(err=>console.log(err))
-
-        
+        console.log(appoveUser.leave_id)
+    //    firestore.collection('leave').doc(appoveUser.leave_id).delete()
+    //    .then(()=>{
+    //         refAppove.doc(appoveUser.id_appove).delete()
+    //         .then(()=>{
+    //             console.log("delete succcess")
+    //         }).catch((err)=>{console.log(err)})
+    //    }).catch((err)=>console.log(err))
         
     }
 
     return (
-        <tr >
-            <td onClick={() => { console.log(props) }}>{props.data.leave_date}</td>
-            <td>{props.data.leave_start}</td>
-            <td>{props.data.amount}</td>
-            <td>{test.map((data, index) => (<div key={index}>{data.typeleavename}</div>))}</td>
-            <td>{props.data.reson}</td>
+            <tr >
+            <td onClick={() => { console.log(appoveUser) }}>{leaveUser.leave_date}</td>
+            <td>{leaveUser.leave_start}</td>
+            <td>{leaveUser.amount}</td>
+            <td>{typeLeaveUser.type_leave_name}</td>
+            <td>{leaveUser.reson}</td>
             <td>
                 <span className="badge badge-pill badge-dark">รออนุมัติ</span>
             </td>

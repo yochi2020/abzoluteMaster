@@ -7,7 +7,6 @@ import Tabeluserleave from  './Summary/Summary'
 import { firestore} from '../../firebase/config'
 const Summary = () => {
   const [leave,setLeave]=useState([])
-  const [typeLeave,setTypeLeave]=useState([])
   const refLeave = firestore.collection("leave")
   const [loading, setLoading] = useState(true)
   useEffect(()=>{
@@ -58,18 +57,19 @@ const Summary = () => {
                 <div className="card">
                   <div className="card-header ">
                     <div className="d-flex justify-content-between">
-                      <h3 className="m-0 text-dark" onClick={() => { console.log(typeLeave) }} >รายการลาทั้งหมด</h3>
+                      <h3 className="m-0 text-dark" >รายการลาทั้งหมด</h3>
                     </div>
                   </div>
                   <div className="card-body table-responsive ">
                     <table className="table table-hover ">
                       <thead className="thead-dark ">
                         <tr>
+                        <th scope="col">ชื่อพนักงาน</th>
                           <th scope="col">วันที่แจ้ง</th>
                           <th scope="col">วันที่ลา</th>
                           <th scope="col">จำนวนวัน</th>
                           <th scope="col">ประเภทการลา</th>
-                          <th scope="col">หมายเหตุ</th>
+                          <th scope="col">เหตุผลที่ลา</th>
                           <th scope="col">สถานะ</th>
                         </tr>
                       </thead>

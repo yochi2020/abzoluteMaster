@@ -1,8 +1,9 @@
 const router = require('express').Router()
-const AdminController = require("../controller/AdminController")
+const AdminControllerMSL = require("../controller/AdminControllerMSL")
+const AdminControllerUser = require('../controller/AdminControllerUser')
 
-
-router.get("/allow/:allow/:reson/:name",AdminController.sendDisAllowed)
+router.get("/allow/:allow/:reson/:name",AdminControllerMSL.sendDisAllowed)
+router.get("/register",AdminControllerUser.registerUser)
 
 
 
