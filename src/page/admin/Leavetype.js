@@ -28,7 +28,6 @@ const Admin = () => {
       setLoading(false)
     }));
     return () => {
-      unsubscribe()
     }
   },[ref])
   const addHandle = (obj) => {

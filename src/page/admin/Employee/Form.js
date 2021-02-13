@@ -1,5 +1,6 @@
 import React,{useState,useEffect} from 'react';
-import {auth,firestore} from '../../../firebase/config'
+import {firestore} from '../../../firebase/config'
+import axios from 'axios'
 const Form = () => {
     const [data,setData]=useState({
         email:"",
@@ -13,9 +14,8 @@ const Form = () => {
     const [userleave,setUserleave]=useState([]);
     const [leavetype,setLeavetype] = useState([]);
     const ref = firestore.collection("type_leave");
-    const quota = firestore.collection("Quota")
     var allUserleave = [];
-    
+    const [test,setTest]=useState([])
     useEffect(()=>{
       ref.onSnapshot(snapshot=>{
         let tempDataArray=[];
@@ -40,9 +40,8 @@ const Form = () => {
         })
         setLeavetype(tempDataArray)
         setUserleave(tempLeaveArray)
-
       })
-    })
+    },[])
     const clearForm=()=>{
         setData({
         email:"",
@@ -54,7 +53,38 @@ const Form = () => {
     }
     const onSignup=(e)=>{
         e.preventDefault()       
-        console.log(data.name)
+        axios.post("http://localhost:4000/register",data)
+        .then(async (result)=>{
+          
+          if(!!result){
+            const userRef =firestore.collection("user").doc(result.data.uid)
+                    const doc = await userRef.get();
+                    if(!doc.data()){
+                        await userRef.set({
+                            uid:result.data.uid,
+                            email:result.data.email,
+                            name:data.name,
+                            fname:data.fname,
+                            lname:data.lname,
+                            phone:data.phone,
+                            user_group:data.user_group
+                        })
+
+                        // const docQuota = await quota.get()
+                        const quota = firestore.collection("quota")
+                        await allUserleave.forEach( async(item)=>{  //เพิ่มจำนวนการลาของแต่ละคน
+                          return  await quota.add({
+                            uid:result.data.uid,
+                            type_leave_id:item.uid,
+                            amount:item.value
+                          })
+                          
+                          })
+                      
+          }
+          console.log(result)
+        }
+        }).catch(err=>console.log(err))
         // auth.createUserWithEmailAndPassword(data.email,data.password)
         // .then(async (result)=>{
         //     if(!!result){
@@ -74,11 +104,11 @@ const Form = () => {
         //         }
         //     }
             
-        //     allUserleave.map(item=>{  //เพิ่มจำนวนการลาของแต่ละคน
-        //       return quota.add({user_id:result.user.uid,type_leave_id:item.uid,amount:item.value}).then(()=>{
-        //         console.log("success")
-        //       }).catch(err=>console.log(err))
-        //     })
+            // allUserleave.map(item=>{  //เพิ่มจำนวนการลาของแต่ละคน
+            //   return quota.add({user_id:result.user.uid,type_leave_id:item.uid,amount:item.value}).then(()=>{
+            //     console.log("success")
+            //   }).catch(err=>console.log(err))
+            // })
             
         //     clearForm();
         // })
@@ -95,7 +125,7 @@ const Form = () => {
               uid:e.target.name,
               value:e.target.value
       }
-      //เมื่อเปลี่ยนค่าจำนวนการลา
+      setTest(allUserleave)
     }
     allUserleave=[...userleave] // เก็บค่าการลา
 

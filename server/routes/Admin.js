@@ -3,8 +3,7 @@ const AdminControllerMSL = require("../controller/AdminControllerMSL")
 const AdminControllerUser = require('../controller/AdminControllerUser')
 
 router.get("/allow/:allow/:reson/:name",AdminControllerMSL.sendDisAllowed)
-router.get("/register",AdminControllerUser.registerUser)
-
-
+router.post("/register",AdminControllerUser.registerUser)
+router.post("/deleteuser",AdminControllerUser.deleteUser)
 
 module.exports = router

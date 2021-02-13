@@ -5,7 +5,9 @@ import Sidebar from '../../component/admin/Sidebar';
 import Checkadmin from './Checkadmin';
 import Tabeluserleave from  './Summary/Summary'
 import { firestore} from '../../firebase/config'
+import {MDBDataTableV5} from 'mdbreact'
 const Summary = () => {
+  
   const [leave,setLeave]=useState([])
   const refLeave = firestore.collection("leave")
   const [loading, setLoading] = useState(true)
@@ -106,6 +108,7 @@ const Summary = () => {
         </div>
         {/* /.content */}
       </div>
+      
       {/* /.content-wrapper */}
       {/* Control Sidebar */}
       <aside className="control-sidebar control-sidebar-dark">

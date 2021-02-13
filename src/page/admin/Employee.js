@@ -6,7 +6,7 @@ import Checkadmin from './Checkadmin';
 import Form from './Employee/Form';
 import Userlist from './Employee/Employee'
 import { firestore } from '../../firebase/config'
-import axios from "axios"
+import axios from 'axios'
 function Employee() {
   const ref = firestore.collection("user");
   const [user, setUser] = useState([])
@@ -23,37 +23,29 @@ function Employee() {
             lname: doc.data().lname,
             name: doc.data().name,
             phone: doc.data().phone,
-            uid: doc.data().uid,
+            uid: doc.id,
             user_group: doc.data().user_group
           }
         ];
       })
-      setUser(tempDataArray)
+      setUser(()=>tempDataArray)
       setLoading(false)
     })
     return () => {
-      unsubscribe()
     };
   });
 
 
   const deleteHandle = (uid) => {
-    alert(uid)
+    let obj={
+      uid
+    }
+    axios.post("http://localhost:4000/deleteuser",obj)
   }
 
 
   const test = ()=>{
 
-    axios.get("http://localhost:4000/").then((test)=>{
-      console.log(test)
-    }).catch((err)=>{
-      console.log(err)
-    })
-    // var user =auth.currentUser;
-
-    // user.delete().then(()=>{
-    //    console.log("success")
-    //  }).catch((err)=>{console.log("err",err)})
   }
   return (
     <div>
@@ -78,7 +70,7 @@ function Employee() {
                 <div className="card">
                   <div className="card-header ">
                     <div className="d-flex justify-content-between">
-                      <h3 className="m-0 text-dark" onClick={()=>test()}>พนักงาน</h3>
+                      <h3 className="m-0 text-dark" onClick={()=>console.log(user)}>พนักงาน</h3>
                       <Form />
                     </div>
                   </div>
@@ -89,7 +81,6 @@ function Employee() {
                           <th scope="col">ชื่อพนักงาน</th>
                           <th scope="col">ชื่อเล่น</th>
                           <th scope="col">ข้อมูลส่วนตัว</th>
-                          <th scope="col">ลาหยุดคงเหลือ</th>
                           <th scope="col">จัดการ</th>
                         </tr>
                       </thead>
