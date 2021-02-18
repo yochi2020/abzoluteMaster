@@ -19,7 +19,6 @@ admin.initializeApp({
       })
       .then((result)=>{
         res.send(result)
-        console.log(result)
         console.log("createuser success")
       }).catch(err=>console.log(err))
     // admin.auth().getUser("U1vsRxm6AfWQLSvj9i3mbisxpUo2")
@@ -35,7 +34,12 @@ admin.initializeApp({
   }
 
   const deleteUser = (req,res)=>{
-    console.log(req.body)
+    admin.auth()
+    .deleteUser(req.body.uid)
+    .then(()=>{
+      console.log("delete user success")
+      res.send(req.body.uid)
+    }).catch((err)=>{console.log(err)})
   }
 
   module.exports ={registerUser,deleteUser}

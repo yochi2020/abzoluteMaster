@@ -60,7 +60,7 @@ const Form = () => {
             const userRef =firestore.collection("user").doc(result.data.uid)
                     const doc = await userRef.get();
                     if(!doc.data()){
-                        await userRef.set({
+                         userRef.set({
                             uid:result.data.uid,
                             email:result.data.email,
                             name:data.name,
@@ -72,8 +72,8 @@ const Form = () => {
 
                         // const docQuota = await quota.get()
                         const quota = firestore.collection("quota")
-                        await allUserleave.forEach( async(item)=>{  //เพิ่มจำนวนการลาของแต่ละคน
-                          return  await quota.add({
+                         allUserleave.forEach( (item)=>{  //เพิ่มจำนวนการลาของแต่ละคน
+                          return   quota.add({
                             uid:result.data.uid,
                             type_leave_id:item.uid,
                             amount:item.value

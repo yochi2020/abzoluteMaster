@@ -5,6 +5,7 @@ import Sidebar from '../../component/user/Sidebar'
 import Checkuser from './Checkuser';
 import {firestore,auth} from '../../firebase/config'
 import   Userhome from './UserHome/Userhome'
+import {MDBDataTableV5} from 'mdbreact'
 const Userleave = () => {
     const [userId,setUserId]=useState([])
     const [appove,setAppove]=useState([])
@@ -14,6 +15,47 @@ const Userleave = () => {
     const refUser = firestore.collection("user")
     const [leaveUser,setleaveUser]=useState([])
     const [loading, setLoading] = useState(true)
+
+    const [datatable, setDatatable] = React.useState({
+      columns: [
+        {
+          label: 'วันที่แจ้ง',
+          field: 'leave_date',
+          width: 150,
+          attributes: {
+            'aria-controls': 'DataTable',
+            'aria-label': 'Name',
+          },
+        },
+        {
+          label: 'วันที่ลา',
+          field: 'leave_start',
+          width: 270,
+        },
+        {
+          label: 'จำนวนวัน',
+          field: 'amount',
+          width: 200,
+        },
+        {
+          label: 'ประเภทการลา',
+          field: 'age',
+          sort: 'asc',
+          width: 100,
+        },
+        {
+          label: 'เหตุผล',
+          field: 'reson',
+          sort: 'disabled',
+          width: 150,
+        },
+        {
+          label: 'สถานะ',
+          field: 'salary',
+          sort: 'disabled',
+          width: 100,
+        }
+      ],})
     useEffect(()=>{
 
       //เก็บค่ายูเซอร์
@@ -69,11 +111,14 @@ const Userleave = () => {
       // หา Leave ของ user
       const findLeave = leave.filter(data=>(data.uid===userId))
       setleaveUser(findLeave)
+      setDatatable({...datatable,rows:leaveUser})
+     
 
     return ()=>{
       
     }
-    },[userId])
+    
+    },[leave])
 
     // หา  Leave ของยูเซอร์
     const findLeave = leave.filter(data=>(data.uid===userId))
@@ -100,10 +145,11 @@ const Userleave = () => {
                 <div className="card">
                   <div className="card-header ">
                     <div className="d-flex justify-content-between">
-                      <h3 className="m-0 text-dark" onClick={()=>{console.log(leaveUser)}} >รายการลาทั้งหมด</h3>
+                      <h3 className="m-0 text-dark" onClick={()=>{console.log(datatable)}} >รายการลาทั้งหมด</h3>
                     </div>
                   </div>
                   <div className="card-body table-responsive ">
+                    <MDBDataTableV5 data={datatable}/>
                     <table className="table table-hover ">
                       <thead className="thead-dark ">
                         <tr>

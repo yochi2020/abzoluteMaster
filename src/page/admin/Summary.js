@@ -5,7 +5,6 @@ import Sidebar from '../../component/admin/Sidebar';
 import Checkadmin from './Checkadmin';
 import Tabeluserleave from  './Summary/Summary'
 import { firestore} from '../../firebase/config'
-import {MDBDataTableV5} from 'mdbreact'
 const Summary = () => {
   
   const [leave,setLeave]=useState([])
