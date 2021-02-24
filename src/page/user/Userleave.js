@@ -1,16 +1,78 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Footer from '../../component/admin/Footer';
 import Navbar from '../../component/admin/Navbar';
 import Sidebar from '../../component/user/Sidebar';
 import Checkuser from './Checkuser';
 import Form from './Userleave/Form';
 import { auth, firestore } from '../../firebase/config'
-import UserleavelTable from './Userleave/Userleave'
+import $ from 'jquery'
+import { MDBDataTableV5 } from 'mdbreact'
 const Userleave = () => {
-  const [dataLeave, setDataLeave] = useState([])
+  const [userEdit, setUserEdit] = useState({
+    
+  })
+  const [leaveOfUser, setleaveOfUser] = useState([])
+  const [appove, setAppove] = useState([])
+  const [typeLeave, setTypeLeave] = useState([])
   const [loading, setLoading] = useState(true)
+
+
+  const refAppove = useRef(firestore.collection("appove")).current
+  const refLeave = firestore.collection("leave")
+  const refTypeLeave = firestore.collection("type_leave")
+
+  const [datatable, setDatatable] = React.useState({
+    columns: [
+      {
+        label: 'วันที่แจ้ง',
+        field: 'leave_date',
+        width: 150,
+        attributes: {
+          'aria-controls': 'DataTable',
+          'aria-label': 'Name',
+        },
+      },
+      {
+        label: 'วันที่ลา',
+        field: 'leave_start',
+        width: 270,
+      },
+      {
+        label: 'จำนวนวัน',
+        field: 'amount',
+        width: 200,
+      },
+      {
+        label: 'ประเภทการลา',
+        field: 'type_leave_name',
+        sort: 'asc',
+        width: 100,
+      },
+      {
+        label: 'หมายเหตุ',
+        field: 'reson',
+        sort: 'disabled',
+        width: 150,
+      },
+      {
+        label: 'สถานะ',
+        field: 'status',
+        sort: 'disabled',
+        width: 100,
+      },
+      {
+        label: 'จัดการ',
+        field: 'config',
+        sort: 'disabled',
+        width: 100,
+      }
+    ],
+  })
+  console.log(1)
   useEffect(() => {
-    const unSubscribe = auth.onAuthStateChanged((firebase) => {
+    console.log(2)
+
+    const unSubscribeLeaveOfUser = auth.onAuthStateChanged((firebase) => {
       if (!!firebase) {
         const ref_leave = firestore.collection("leave").where("uid", "==", firebase.uid)
         ref_leave.onSnapshot(doc_leave => {
@@ -19,29 +81,121 @@ const Userleave = () => {
             tempDataArray_leave = [
               ...tempDataArray_leave,
               {
-              leave_date:data_leave.data().leave_date,
-              leave_start:data_leave.data().leave_start,
-              reson:data_leave.data().reson,
-              type_leave_id:data_leave.data().type_leave_id,
-              amount:data_leave.data().amount,
-              leave_id:data_leave.id,
-              uid:data_leave.data().uid
+                leave_date: data_leave.data().leave_date,
+                leave_start: data_leave.data().leave_start,
+                reson: data_leave.data().reson,
+                type_leave_id: data_leave.data().type_leave_id,
+                amount: data_leave.data().amount,
+                leave_id: data_leave.id,
+                uid: data_leave.data().uid
               }
             ]
           })
-          setDataLeave(tempDataArray_leave)
+          setleaveOfUser(() => tempDataArray_leave)
           setLoading(false)
+
         })
-
       }
-      
     })
+
+    const unSubscribeAppove = refAppove.onSnapshot(doc => {
+      let tempArrayAppove = []
+      doc.forEach(data => {
+        tempArrayAppove = [
+          ...tempArrayAppove,
+          {
+            appoveId: data.id,
+            hr_appove: data.data().hr_appove,
+            hr_remark: data.data().hr_remark,
+            leave_appove: data.data().leave_appove,
+            leave_remark: data.data().leave_remark,
+            leave_id: data.data().leave_id,
+            status: data.data().status
+          }
+        ]
+      })
+      setAppove(() => tempArrayAppove)
+    })
+
+    const unSubscribeTypeLeave = refTypeLeave.onSnapshot(doc => {
+      let tempArrayTypeLeave = []
+      doc.forEach(data => {
+        tempArrayTypeLeave = [
+          ...tempArrayTypeLeave,
+          {
+            type_leave_id: data.id,
+            type_leave_name: data.data().type_leave_name
+          }
+        ]
+      })
+      setTypeLeave(() => tempArrayTypeLeave)
+    })
+
+    reload()
+
     return () => {
-      unSubscribe()
+      unSubscribeLeaveOfUser()
+      unSubscribeAppove()
+      unSubscribeTypeLeave()
     }
-  },[])
+  }, [loading])
+
+  console.log(3)
+  const reload = () => {
+    let tempArrayFindData = leaveOfUser
+    tempArrayFindData.forEach((data, i) => {
+      typeLeave.forEach(dataTypeLeave => {
+        if (dataTypeLeave.type_leave_id === data.type_leave_id) {
+          tempArrayFindData[i] = {
+            ...tempArrayFindData[i],
+            type_leave_name: dataTypeLeave.type_leave_name,
+          }
+        }
+      })
+
+      appove.forEach(dataAppove => {
+        if (dataAppove.leave_id === data.leave_id) {
+          let buttotDelete = <div><button onClick={(e) => { deleteHandle(e) }} className="btn btn-sm btn-outline-danger" id={dataAppove.appoveId} name={data.leave_id}>Delete</button></div>
+
+          let status = ''
+          switch (dataAppove.status) {
+            case 'y': status = 'อนุมัติ'
+              break;
+            case 'no': status = 'ไม่อนุมัติ'
+              break;
+            case '': status = 'รออนุมัติ'
+
+          }
+          if (dataAppove.status != '') {
+            tempArrayFindData[i] = ''
+          } else {
+            tempArrayFindData[i] = {
+              ...tempArrayFindData[i],
+              status: <span className="badge badge-pill badge-dark">{status}</span>,
+              config: buttotDelete
+
+            }
+          }
+
+        }
+      })
+    })
 
 
+    setDatatable({ ...datatable, rows: tempArrayFindData })
+  }
+
+  const deleteHandle = (e) => {
+    setLoading(true)
+    const leaveId = e.target.name
+    const appoveId = e.target.id
+    refLeave.doc(leaveId).delete()
+    refAppove.doc(appoveId).delete()
+
+
+  }
+
+  
   return (
     <div>
       <Checkuser />
@@ -65,47 +219,20 @@ const Userleave = () => {
                 <div className="card">
                   <div className="card-header ">
                     <div className="d-flex justify-content-between">
-                      <h3 className="m-0 text-dark" >รายการลา</h3>
+                      <h3 className="m-0 text-dark" onClick={() => { console.log() }}>รายการขอลา</h3>
                       <Form />
                     </div>
                   </div>
                   <div className="card-body table-responsive ">
+                    {
+                      loading ? (
+                        <div className="spinner-border mx-auto" style={{ width: "3rem", height: "3rem" }} role="status">
+                        </div>
 
-                    <table className="table table-hover ">
-                      <thead className="thead-dark ">
-                        <tr>
-                          <th scope="col">วันที่แจ้ง</th>
-                          <th scope="col">วันที่ลา</th>
-                          <th scope="col">จำนวนวัน</th>
-                          <th scope="col">ประเภทการลา</th>
-                          <th scope="col">หมายเหตุ</th>
-                          <th scope="col">สถานะ</th>
-                          <th scope="col">จัดการ</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                       {
-                         dataLeave.map((item,index)=>
-                            <UserleavelTable data={item} key={index}/>
-                         )
-                       }
-                      </tbody>
-                      <tbody>
-                      {
-                        loading ?(
-                            <tr>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td><div className="spinner-border mx-auto" style={{width:"3rem",height:"3rem"}} role="status">
-                            </div></td>
-                            </tr>
-                         
-                        )
-                        : null
-                      }
-                      </tbody>
-                    </table>
+                      )
+                        : <MDBDataTableV5 data={datatable} entriesOptions={[5, 20, 25]} entries={5} pagesAmount={4} />
+
+                    }
                   </div>
                 </div>
               </div>
@@ -125,6 +252,46 @@ const Userleave = () => {
       </aside>
       {/* /.control-sidebar */}
       <Footer />
+      {/* <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">แก้ไขการลา</h5>
+              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div className="modal-body">
+                            <div className="container-fluid">
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <label>วันที่ลา</label>
+                                        <input type="date" id="myDate"   className="form-control" />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label htmlFor="">จำนวนการลา</label>
+                                        <input id="myAmount"   type="number" className="form-control" />
+
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <div className="form-group">
+                                            <label htmlFor="" >เหตุผล</label>
+                                            <textarea id="myReson" className="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" className="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div> */}
+
     </div >
   );
 };

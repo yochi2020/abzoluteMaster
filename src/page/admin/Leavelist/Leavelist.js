@@ -104,17 +104,19 @@ export default function Leavelist(props) {
 
 
     const notAllowed = (obj, reson,fname,lname,namee) => {
-        const name = fname+" "+lname+ " ("+namee+") "
-        userr.doc(auth.currentUser.uid).onSnapshot(doc_user => {
-              if (doc_user.data().user_group === 'hr') {
-                refAppove.doc(obj.id_appove).set({ ...obj, hr_appove: "ไม่อนุมัติ", status: "no",hr_remark:reson })
-              } else if (doc_user.data().user_group === 'admin') {
-                refAppove.doc(obj.id_appove).set({ ...obj, leave_appove: "ไม่อนุมัติ", status: "no",leave_remark:reson })
-              }
-            axios.get("http://localhost:4000/allow/notallowed/"+reson+"/"+name)
-                .then(() => {
-                }).catch(err => console.log(err))
-        })
+
+        console.log(appove)
+        // const name = fname+" "+lname+ " ("+namee+") "
+        // userr.doc(auth.currentUser.uid).onSnapshot(doc_user => {
+        //       if (doc_user.data().user_group === 'hr') {
+        //         refAppove.doc(obj.id_appove).set({ ...obj, hr_appove: "ไม่อนุมัติ", status: "no",hr_remark:reson })
+        //       } else if (doc_user.data().user_group === 'admin') {
+        //         refAppove.doc(obj.id_appove).set({ ...obj, leave_appove: "ไม่อนุมัติ", status: "no",leave_remark:reson })
+        //       }
+        //     axios.get("http://localhost:4000/allow/notallowed/"+reson+"/"+name)
+        //         .then(() => {
+        //         }).catch(err => console.log(err))
+        // })
 
     }
 
@@ -150,7 +152,7 @@ export default function Leavelist(props) {
         props.data.status === 'no' || props.data.status === 'y' ? (
             null
         ) : <tr>
-                <th onClick={()=>{console.log(appoveLeave)}} scope="row">{
+                <th  scope="row">{
                     userValueShow.map((data, index) => (<div key={index}>{data.fname} {data.lname} ({data.name})               
                     <div className="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <div className="modal-dialog">
@@ -166,7 +168,7 @@ export default function Leavelist(props) {
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => setReson("")}>ยกเลิก</button>
-                                    <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={() => { notAllowed(props.data, reson,data.fname,data.lname,data.name) }}>ตกลง</button>
+                                    <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={() => { notAllowed(props.data.id_appove, reson,data.fname,data.lname,data.name) }}>{props.data.id_appove}ตกลง</button>
                                 </div>
                             </div>
                         </div>
@@ -194,7 +196,7 @@ export default function Leavelist(props) {
                     <button className="btn btn-sm btn-outline-success mr-1" onClick={()=>{allow(props.data,userValueShow)}}>อนุมัติ</button>
                     {/* <button className="btn btn-sm btn-outline-danger" onClick={props.notAllowed} >ไม่อนุมัติ</button> */}
                     <button type="button" className="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#staticBackdrop">
-                        ไม่อนุมัติ
+                        ไม่อนุมัติ {props.data.id_appove}
                     </button>
                 </td>
 

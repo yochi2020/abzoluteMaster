@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {firestore} from '../../../firebase/config'
+import {firestore,auth} from '../../../firebase/config'
 import axios from 'axios'
 const Form = () => {
     const [data,setData]=useState({
@@ -14,8 +14,8 @@ const Form = () => {
     const [userleave,setUserleave]=useState([]);
     const [leavetype,setLeavetype] = useState([]);
     const ref = firestore.collection("type_leave");
+
     var allUserleave = [];
-    const [test,setTest]=useState([])
     useEffect(()=>{
       ref.onSnapshot(snapshot=>{
         let tempDataArray=[];
@@ -49,10 +49,13 @@ const Form = () => {
         name:"",
         fname:"",
         lname:"",
+        phone:""
         })
     }
     const onSignup=(e)=>{
-        e.preventDefault()       
+      clearForm()
+        e.preventDefault()    
+        console.log(data)   
         axios.post("http://localhost:4000/register",data)
         .then(async (result)=>{
           
@@ -69,9 +72,9 @@ const Form = () => {
                             phone:data.phone,
                             user_group:data.user_group
                         })
+                        const quota = firestore.collection("quota")
 
                         // const docQuota = await quota.get()
-                        const quota = firestore.collection("quota")
                          allUserleave.forEach( (item)=>{  //เพิ่มจำนวนการลาของแต่ละคน
                           return   quota.add({
                             uid:result.data.uid,
@@ -110,7 +113,7 @@ const Form = () => {
             //   }).catch(err=>console.log(err))
             // })
             
-        //     clearForm();
+            // clearForm();
         // })
         // .catch(err=>{
         //     alert(err.code)
@@ -125,10 +128,12 @@ const Form = () => {
               uid:e.target.name,
               value:e.target.value
       }
-      setTest(allUserleave)
-    }
-    allUserleave=[...userleave] // เก็บค่าการลา
 
+
+
+
+    }
+ allUserleave=[...userleave] 
     return (
         <div>
     <button className="btn btn-sm btn-info" data-toggle="modal" data-target="#staticBackdrop">เพิ่มพนักงาน</button>
@@ -139,7 +144,7 @@ const Form = () => {
             <div className="modal-header">
               <h5 className="modal-title" id="staticBackdropLabel">เพิ่มพนักงาน</h5>
               <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
+                <span aria-hidden="true" onClick={()=>clearForm()}>×</span>
               </button>
             </div>
             <div className="modal-body">
@@ -147,7 +152,7 @@ const Form = () => {
                 <div className="row">
                   <div className="col-md-4">
                     <div className="form-group">
-                      <label>อีเมล์</label>
+                      <label onClick={()=>console.log(allUserleave)}>อีเมล์</label>
                       <input type="text" className="form-control" value={data.email} onChange={(e)=>{setData({...data,email:e.target.value})}}></input>
                     </div>
                     <div className="form-group">
@@ -187,7 +192,7 @@ const Form = () => {
               </div>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-dismiss="modal">ปิดหน้าจอ</button>
+              <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={()=>clearForm()}>ปิดหน้าจอ</button>
               <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={(e)=>{onSignup(e)}}>บันทึก</button>
             </div>
           </div>

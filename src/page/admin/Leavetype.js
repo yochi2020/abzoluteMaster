@@ -91,7 +91,7 @@ const Admin = () => {
         <div className="content">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-lg-6">
+              <div className="col-lg-12">
                 <div className="card">
                   <div className="card-header ">
                     <div className="d-flex justify-content-between">

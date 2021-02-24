@@ -90,6 +90,7 @@ const Form = () => {
     const checkQuota = (e) => {
         const checkQuotaOfUser = quotaUser.find(data => data.type_leave_id === e.target.id)
         setAmount({ ...amount, max: checkQuotaOfUser.amount })
+
         setData({...data,type_leave_id:e.target.id,uid:user.id})
     }
 
@@ -109,23 +110,25 @@ const Form = () => {
         document.getElementById("myReson").value=""
     }
 
-    const submitData= ()=>{
-         refLeave.add(data)
-        .then((result)=>{
-            let obj=  {
-                leave_id:result.id,
-                leave_appove:"",
-                hr_appove:"",
-                leave_remark:"",
-                hr_remark:"",
-                status:"",
-            }
-            refAppove.add(obj).then(()=>{
-                console.log("success")
-            }).catch(err=>{console.log(err)})
-            clearData()
-        }).catch(err=>{console.log(err)})
+    const submitData= async()=>{
+        clearData()
+        const myid =  Math.random(999).toString()
+        console.log(myid)
+        var obj= await  {
+            leave_id:myid,
+            leave_appove:"",
+            hr_appove:"",
+            leave_remark:"",
+            hr_remark:"",
+            status:"",
+        }
+       await refLeave.doc(myid).set(data)
+             
+         refAppove.add(obj)
+        window.location.reload()
     }
+
+
     return (
         <div>
             <div className="dropdown">
@@ -153,7 +156,7 @@ const Form = () => {
                             <div className="container-fluid">
                                 <div className="row">
                                     <div className="col-md-6">
-                                        <label onClick={() => { console.log(data) }}>วันที่ลา</label>
+                                        <label>วันที่ลา</label>
                                         <input type="date" id="myDate"  onChange={(e) => {  fomatDate(e) }} className="form-control" />
                                     </div>
                                     <div className="col-md-6">

@@ -38,7 +38,7 @@ const Sidebar = () => {
               <li className="nav-item">
                 <Link to="/userleave" className={`nav-link ${location.pathname === '/userleave' ? 'active' : null}`}>
                   <i className="fas fa-history nav-icon"></i>
-                  <p>รายการลา</p>
+                  <p>รายการขอลา</p>
                 </Link>
               </li>
 

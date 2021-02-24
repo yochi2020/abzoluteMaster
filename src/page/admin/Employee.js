@@ -8,9 +8,9 @@ import Userlist from './Employee/Employee'
 import { firestore } from '../../firebase/config'
 import axios from 'axios'
 import { MDBDataTableV5 } from 'mdbreact';
-import { data } from 'jquery';
-
+import $ from 'jquery'
 function Employee() {
+  
   const [user, setUser] = useState([])
   const [loading, setLoading] = useState(true)
   const [editQuota,setEditQuota]=useState([])
@@ -57,7 +57,20 @@ function Employee() {
     ],
     
   });
-    
+
+
+  
+  const [testt,setTestt]=useState(0)
+  setTimeout(()=>{
+
+    if(testt>=1){
+
+    }else{
+
+     setTestt(testt+1)
+    }
+    $(".click").click()
+  },1500)
   useEffect(() => {
 
     //pull data Quota
@@ -126,10 +139,11 @@ function Employee() {
     
     return () => {
     };
-  },[user]);
+  },[testt]);
 
 
   const deleteHandle = async (uid) => {
+    setTestt(Math.random())
     let obj={
       uid
     }
@@ -199,36 +213,35 @@ function Employee() {
   }
 
 
-  const submitHandle =()=>{
-    console.log(quotaOfUser)
-    console.log()
-  }
+  
 
 
 
   //clear form edit
   const clearHandle =()=>{
+    setTestt(Math.random())
     setEditUser([])
   }
-  var quotaOfUser = quotaUser
-  const [test,setTest]=useState([])
-  const countAmount =(e)=>{
-    // console.log(e.target.value)
-    // console.log(e.target.name)
-    // console.log(quotaUser)
+  
+  const countAmount =(e,data)=>{
 
-
-    //find index array of quota user
-    let findIndexQuotaUser = quotaUser.findIndex(data=>{
-      return data.quota_id===e.target.name
+    refQuota.doc(e.target.name)
+    .set({
+        amount:e.target.value,
+        type_leave_id:data.type_leave_id,
+        uid:data.uid
     })
 
-    quotaOfUser[findIndexQuotaUser]={
-      ...quotaOfUser[findIndexQuotaUser],
-      
-        amount:e.target.value
-    }
-    console.log(quotaUser)
+  }
+
+
+  const submitHandle =()=>{
+    refUser.doc(editUser.uid)
+    .set(editUser)
+
+    console.log(editUser)
+
+    setTestt(Math.random())
   }
   return (
     <div>
@@ -253,20 +266,24 @@ function Employee() {
                 <div className="card">
                   <div className="card-header ">
                     <div className="d-flex justify-content-between">
-                      <h3 className="m-0 text-dark" onClick={()=>{console.log(quotaUser)}} >พนักงาน</h3>
+                      <h3 className="m-0 text-dark click" onClick={()=>{setTestt("9")}} >พนักงาน</h3>
                       <Form />
                     </div>
                   </div>
                   <div className="card-body table-responsive ">
-                  <MDBDataTableV5 hover entriesOptions={[5, 20, 25]}  entries={5} pagesAmount={4} data={datatable} searchTop searchBottom={false}/>
-                   
-                        {
+                  {
                           loading ? (
                               <div className="spinner-border mx-auto mr-4" style={{width:"3rem",height:"3rem"}} role="status">
                               </div>
                               
-                          ) : null
-                        }
+                 
+                 ) : <MDBDataTableV5 hover entriesOptions={[5, 20, 25]}  entries={5} pagesAmount={4} data={datatable} searchTop searchBottom={false}/>
+
+                }
+                  
+                        
+                   
+                        
                   </div>
                 </div>
               </div>
@@ -313,17 +330,17 @@ function Employee() {
                     </div>
                     <div className="form-group">
                       <label>เบอร์โทรศัพ</label>
-                      <input type="text" value={editUser.phone}  className="form-control" ></input>
+                      <input type="text" value={editUser.phone} onChange={(e)=>setEditUser({...editUser,phone:e.target.value})} className="form-control" ></input>
                     </div>
                   </div>
                   <div className="col-md-4">
                     <div className="form-group">
                       <label>ชื่อจริง</label>
-                      <input type="text" value={editUser.fname}  className="form-control"  ></input>
+                      <input type="text" value={editUser.fname} onChange={(e)=>setEditUser({...editUser,fname:e.target.value})}  className="form-control"  ></input>
                     </div>
                     <div className="form-group">
                       <label>นามสกุล</label>
-                      <input type="text" value={editUser.lname}  className="form-control"></input>
+                      <input type="text" value={editUser.lname} onChange={(e)=>setEditUser({...editUser,lname:e.target.value})}  className="form-control"></input>
                     </div>
                     
                   </div>
@@ -346,7 +363,7 @@ function Employee() {
                                 
                               }
                               </label>
-                              <input className="form-control" type="number" defaultValue={data.amount} min="0" id="example-number-input" name={data.quota_id}  onChange={(e)=>{countAmount(e)}}  />
+                              <input className="form-control" type="number" defaultValue={data.amount} min="0"  name={data.quota_id}  onChange={(e)=>{countAmount(e,data)}}  />
                             </div>
                           ))
                         }
@@ -356,7 +373,7 @@ function Employee() {
       </div>
       <div className="modal-footer">
         <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={()=>clearHandle}>ปิด</button>
-        <button type="button" className="btn btn-primary" onClick={()=>submitHandle()}>บันทึก</button>
+        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={()=>submitHandle()}>บันทึก</button>
       </div>
     </div>
   </div>

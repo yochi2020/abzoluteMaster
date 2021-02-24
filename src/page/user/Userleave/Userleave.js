@@ -28,7 +28,7 @@ export default function Userleave(props) {
 
 
         //find appove of user
-        refAppove.onSnapshot(doc=>{
+        refAppove.onSnapshot(async(doc)=>{
             let tempArrayAppove = []
             doc.forEach(data=>{
                 tempArrayAppove=[
@@ -44,11 +44,11 @@ export default function Userleave(props) {
                     }
                 ]
             })
-            const appoveOfUser =tempArrayAppove.find(data=>data.leave_id===leaveUser.leave_id)
-            setAppoveUser(appoveOfUser)
-            setStatus(appoveUser)
+            const appoveOfUser = await  tempArrayAppove.find(data=>data.leave_id===leaveUser.leave_id)
+            await  setAppoveUser(appoveOfUser)
+            await setStatus(appoveUser)
         })
-    })
+    },[props])
 
 
     const handleEdit = () => {
@@ -57,20 +57,24 @@ export default function Userleave(props) {
 
     }
     const handleDelete =  () => {
-        console.log(appoveUser.leave_id)
-    //    firestore.collection('leave').doc(appoveUser.leave_id).delete()
-    //    .then(()=>{
-    //         refAppove.doc(appoveUser.id_appove).delete()
-    //         .then(()=>{
-    //             console.log("delete succcess")
-    //         }).catch((err)=>{console.log(err)})
-    //    }).catch((err)=>console.log(err))
+       firestore.collection('leave').doc(appoveUser.leave_id).delete()
+       .then(()=>{
+            refAppove.doc(appoveUser.id_appove).delete()
+       }).catch((err)=>console.log(err))
         
     }
 
+   
+       
+           
+    
+   
+       
+    
+
     return (
-            <tr >
-            <td onClick={() => { console.log(appoveUser) }}>{leaveUser.leave_date}</td>
+        <tr >
+            <td onClick={() => { console.log(status) }}>{leaveUser.leave_date}</td>
             <td>{leaveUser.leave_start}</td>
             <td>{leaveUser.amount}</td>
             <td>{typeLeaveUser.type_leave_name}</td>
