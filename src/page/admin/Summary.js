@@ -3,14 +3,93 @@ import Footer from '../../component/admin/Footer';
 import Navbar from '../../component/admin/Navbar';
 import Sidebar from '../../component/admin/Sidebar';
 import Checkadmin from './Checkadmin';
-import Tabeluserleave from  './Summary/Summary'
 import { firestore} from '../../firebase/config'
+import {MDBDataTableV5} from 'mdbreact'
 const Summary = () => {
-  
+  const [user,setUser]=useState([])
+  const [appove,setAppove]=useState([])
   const [leave,setLeave]=useState([])
+  const [leaveType,setLeaveType]=useState([])
   const refLeave = firestore.collection("leave")
+  const refLeaveType= firestore.collection("type_leave")
+  const refUser =firestore.collection("user")
+  const refAppove =firestore.collection("appove")
   const [loading, setLoading] = useState(true)
+  const [datatable, setDatatable] = useState({
+    columns: [
+      {
+        label: 'ชื่อพนักงาน',
+        field: 'name',
+        width: 200,
+      },
+      {
+        label: 'วันที่แจ้ง',
+        field: 'leave_date',
+        width: 200,
+      },
+      {
+        label: 'วันที่ลา',
+        field: 'leave_start',
+        width: 200,
+      },
+      {
+        label: 'จำนวนวัน',
+        field: 'amount',
+        sort: 'asc',
+        width: 2,
+      },
+      {
+        label: 'ประเภทการลา',
+        field: 'type_leave_name',
+        sort: 'asc',
+        width: 5,
+      },
+      {
+        label: 'เหตุผลที่ลา',
+        field: 'reason',
+        sort: 'asc',
+        width: 5,
+      },
+      {
+        label: 'สถานะ',
+        field: 'status',
+        sort: 'asc',
+        width: 5,
+      }
+    ]
+  });
   useEffect(()=>{
+    const usersubscribe =refUser.onSnapshot(doc=>{
+      let tempArrayUser=[]
+      doc.forEach(data=>{
+        tempArrayUser=[
+          ...tempArrayUser,
+          {
+            uid:data.id,
+            email:data.data().email,
+            fname:data.data().fname,
+            lname:data.data().lname,
+            name:data.data().name,
+            phone:data.data().phone,
+            user_group:data.data().user_group,
+          }
+        ]
+      })
+      setUser(tempArrayUser)
+    })
+    const appovescribe = refAppove.onSnapshot(doc=>{
+      let tempArrayAppove =[]
+      doc.forEach(data=>{
+        tempArrayAppove=[
+          ...tempArrayAppove,
+          {
+            leave_id:data.data().leave_id,
+            status:data.data().status
+          }
+        ]
+      })
+      setAppove(tempArrayAppove)
+    })
     //find all leave
     const leavesubscribe =refLeave.onSnapshot(doc=>{
       let tempArrayLeave=[]
@@ -29,12 +108,75 @@ const Summary = () => {
         ]
       })
       setLeave(tempArrayLeave)
-      setLoading(false)
     })
+    const leaveTypesubscribe =refLeaveType.onSnapshot(doc=>{
+      let tempArrayLeaveType =[]
+      doc.forEach( (data)=>{
+        tempArrayLeaveType=[
+          ...tempArrayLeaveType,
+          {
+            LeaveTypeId:data.id,
+            type_leave_name:data.data().type_leave_name
+          }
+        ]
+      })
+       setLeaveType(tempArrayLeaveType)
+       setLoading(false)
+    })
+    console.log('useEffect')
+    reLoad()
     return ()=>{
+      usersubscribe()
+      appovescribe()
       leavesubscribe()
+      leaveTypesubscribe()
+      
     }
-  },[])
+  },[loading])
+  
+
+
+const reLoad = ()=>{
+  console.log("reload")
+  let  tempArrayLeave =leave
+  tempArrayLeave.forEach((dataLeave,i)=>{
+      leaveType.forEach((dataLeaveType)=>{
+        if(dataLeave.type_leave_id===dataLeaveType.LeaveTypeId){
+          tempArrayLeave[i]={
+            ...tempArrayLeave[i],
+            type_leave_name:dataLeaveType.type_leave_name
+          }
+          
+        }
+      })
+      user.forEach(dataUser=>{
+        if(dataLeave.uid===dataUser.uid){
+          tempArrayLeave[i]={
+            ...tempArrayLeave[i],
+            name:dataUser.name
+          }
+        }
+      })
+      appove.forEach(dataAppove=>{
+        if(dataLeave.leave_id===dataAppove.leave_id){
+          let status =''
+          switch (dataAppove.status) {
+            case 'y':status = 'อนุมัติ'
+              break;
+              case 'no':status = 'ไม่อนุมัติ'
+                break;
+                case '':status = 'รออนุมัติ'
+              break;
+          }
+          tempArrayLeave[i]={
+            ...tempArrayLeave[i],
+            status:<span className="badge badge-pill badge-dark">{status}</span>
+          }
+        }
+      })
+    })
+    setDatatable({...datatable,rows:tempArrayLeave})
+}
   return (
     <div>
       <Checkadmin />
@@ -54,47 +196,21 @@ const Summary = () => {
         <div className="content">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-lg-12">
+              <div className="col-lg-12" style={{height:'670px'}}>
                 <div className="card">
                   <div className="card-header ">
                     <div className="d-flex justify-content-between">
-                      <h3 className="m-0 text-dark" >รายการลาทั้งหมด</h3>
+                      <h3 className="m-0 text-dark" onClick={()=>console.log(datatable)} >รายการลาทั้งหมด</h3>
                     </div>
                   </div>
-                  <div className="card-body table-responsive ">
-                    <table className="table table-hover ">
-                      <thead className="thead-dark ">
-                        <tr>
-                        <th scope="col">ชื่อพนักงาน</th>
-                          <th scope="col">วันที่แจ้ง</th>
-                          <th scope="col">วันที่ลา</th>
-                          <th scope="col">จำนวนวัน</th>
-                          <th scope="col">ประเภทการลา</th>
-                          <th scope="col">เหตุผลที่ลา</th>
-                          <th scope="col">สถานะ</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                          {
-                            leave.map((data,index)=>{
-                              return <Tabeluserleave data={data} key={index}/>
-                            })
-                          }
-                      </tbody>
-                      {
+                  <div className="card-body table-responsive " >
+                  {
                         loading ?(
-                          <tbody>
-                            <tr>
-                              <td></td>
-                              <td></td>
-                              <td><div className="spinner-border mx-auto" style={{width:"3rem",height:"3rem"}} role="status">
-                            </div></td>
-                            </tr>
-                            </tbody>
+                              <div className="spinner-border mx-auto" style={{width:"3rem",height:"3rem"}} role="status">
+                              </div>
                         )
-                        : null
+                        : <MDBDataTableV5 hover entriesOptions={[5, 20, 25]}  entries={5} pagesAmount={4} data={datatable} searchTop searchBottom={false}></MDBDataTableV5>
                       }
-                    </table>
                   </div>
                 </div>
               </div>

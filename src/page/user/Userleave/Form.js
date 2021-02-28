@@ -25,7 +25,7 @@ const Form = () => {
     const refLeave = firestore.collection("leave")
 
     useEffect(() => {
-
+       
         // info user
         auth.onAuthStateChanged((firebaseUser) => {
             if (!!firebaseUser) {
@@ -76,10 +76,13 @@ const Form = () => {
 
 
     },[user])
-
+   
     const fomatDate = (e) => {
         let leaveDate = new Date()
-        let fomatLeaveDate = leaveDate.getDay()+"/"+leaveDate.getMonth()+"/"+leaveDate.getFullYear()
+        let leaveDay =leaveDate.getDate().toLocaleString()
+        let leaveMonth=leaveDate.getMonth()
+        let leaveFullName=leaveDate.getFullYear()
+        let fomatLeaveDate = leaveDay+'/'+leaveMonth+'/'+leaveFullName
         let d = new Date(e.target.value)
         let dt = d.getDate();
         let mn = d.getMonth() +1;

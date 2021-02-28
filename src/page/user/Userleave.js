@@ -5,22 +5,17 @@ import Sidebar from '../../component/user/Sidebar';
 import Checkuser from './Checkuser';
 import Form from './Userleave/Form';
 import { auth, firestore } from '../../firebase/config'
-import $ from 'jquery'
 import { MDBDataTableV5 } from 'mdbreact'
 const Userleave = () => {
   const [userEdit, setUserEdit] = useState({
-    
   })
   const [leaveOfUser, setleaveOfUser] = useState([])
   const [appove, setAppove] = useState([])
   const [typeLeave, setTypeLeave] = useState([])
   const [loading, setLoading] = useState(true)
-
-
   const refAppove = useRef(firestore.collection("appove")).current
   const refLeave = firestore.collection("leave")
   const refTypeLeave = firestore.collection("type_leave")
-
   const [datatable, setDatatable] = React.useState({
     columns: [
       {
@@ -66,12 +61,9 @@ const Userleave = () => {
         sort: 'disabled',
         width: 100,
       }
-    ],
-  })
-  console.log(1)
+    ]
+  },)
   useEffect(() => {
-    console.log(2)
-
     const unSubscribeLeaveOfUser = auth.onAuthStateChanged((firebase) => {
       if (!!firebase) {
         const ref_leave = firestore.collection("leave").where("uid", "==", firebase.uid)
@@ -116,7 +108,6 @@ const Userleave = () => {
       })
       setAppove(() => tempArrayAppove)
     })
-
     const unSubscribeTypeLeave = refTypeLeave.onSnapshot(doc => {
       let tempArrayTypeLeave = []
       doc.forEach(data => {
@@ -130,20 +121,17 @@ const Userleave = () => {
       })
       setTypeLeave(() => tempArrayTypeLeave)
     })
-
     reload()
-
     return () => {
       unSubscribeLeaveOfUser()
       unSubscribeAppove()
       unSubscribeTypeLeave()
     }
   }, [loading])
-
-  console.log(3)
   const reload = () => {
     let tempArrayFindData = leaveOfUser
     tempArrayFindData.forEach((data, i) => {
+      //find typeLeave
       typeLeave.forEach(dataTypeLeave => {
         if (dataTypeLeave.type_leave_id === data.type_leave_id) {
           tempArrayFindData[i] = {
@@ -152,11 +140,10 @@ const Userleave = () => {
           }
         }
       })
-
+      //findAppove
       appove.forEach(dataAppove => {
         if (dataAppove.leave_id === data.leave_id) {
           let buttotDelete = <div><button onClick={(e) => { deleteHandle(e) }} className="btn btn-sm btn-outline-danger" id={dataAppove.appoveId} name={data.leave_id}>Delete</button></div>
-
           let status = ''
           switch (dataAppove.status) {
             case 'y': status = 'อนุมัติ'
@@ -164,7 +151,6 @@ const Userleave = () => {
             case 'no': status = 'ไม่อนุมัติ'
               break;
             case '': status = 'รออนุมัติ'
-
           }
           if (dataAppove.status != '') {
             tempArrayFindData[i] = ''
@@ -173,29 +159,20 @@ const Userleave = () => {
               ...tempArrayFindData[i],
               status: <span className="badge badge-pill badge-dark">{status}</span>,
               config: buttotDelete
-
             }
           }
-
         }
       })
     })
-
-
     setDatatable({ ...datatable, rows: tempArrayFindData })
   }
-
   const deleteHandle = (e) => {
     setLoading(true)
     const leaveId = e.target.name
     const appoveId = e.target.id
     refLeave.doc(leaveId).delete()
     refAppove.doc(appoveId).delete()
-
-
   }
-
-  
   return (
     <div>
       <Checkuser />
@@ -215,23 +192,20 @@ const Userleave = () => {
         <div className="content">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-lg-12">
+              <div className="col-lg-12" style={{height:'670px'}}>
                 <div className="card">
                   <div className="card-header ">
                     <div className="d-flex justify-content-between">
-                      <h3 className="m-0 text-dark" onClick={() => { console.log() }}>รายการขอลา</h3>
+                      <h3 className="m-0 text-dark">รายการขอลา</h3>
                       <Form />
                     </div>
                   </div>
-                  <div className="card-body table-responsive ">
+                  <div className="card-body table-responsive " >
                     {
                       loading ? (
-                        <div className="spinner-border mx-auto" style={{ width: "3rem", height: "3rem" }} role="status">
-                        </div>
-
+                        <div className="spinner-border mx-auto" style={{ width: "3rem", height: "3rem" }} role="status"></div>
                       )
-                        : <MDBDataTableV5 data={datatable} entriesOptions={[5, 20, 25]} entries={5} pagesAmount={4} />
-
+                        : <MDBDataTableV5 data={datatable} entriesOptions={[5, 20, 25]} entries={5} pagesAmount={4} searchTop searchBottom={false} />
                     }
                   </div>
                 </div>
@@ -252,48 +226,7 @@ const Userleave = () => {
       </aside>
       {/* /.control-sidebar */}
       <Footer />
-      {/* <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">แก้ไขการลา</h5>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div className="modal-body">
-                            <div className="container-fluid">
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <label>วันที่ลา</label>
-                                        <input type="date" id="myDate"   className="form-control" />
-                                    </div>
-                                    <div className="col-md-6">
-                                        <label htmlFor="">จำนวนการลา</label>
-                                        <input id="myAmount"   type="number" className="form-control" />
-
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <div className="form-group">
-                                            <label htmlFor="" >เหตุผล</label>
-                                            <textarea id="myReson" className="form-control"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" className="btn btn-primary">Save changes</button>
-            </div>
-          </div>
-        </div>
-      </div> */}
-
     </div >
   );
 };
-
 export default Userleave;

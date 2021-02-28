@@ -74,7 +74,7 @@ function Employee() {
   useEffect(() => {
 
     //pull data Quota
-    refQuota.onSnapshot(snapshot=>{
+   const quotasubscrib= refQuota.onSnapshot(snapshot=>{
       let tempArrayQuota=[]
       snapshot.forEach(data=>{
         tempArrayQuota=[
@@ -91,7 +91,7 @@ function Employee() {
     })
 
     // pull data type_leave
-    refTypeLeave.onSnapshot(snapshot=>{
+    const typeleavesubscrib= refTypeLeave.onSnapshot(snapshot=>{
       let tempArrayTypeLeave=[]
       snapshot.forEach(dataa=>{
         tempArrayTypeLeave=[
@@ -108,7 +108,7 @@ function Employee() {
 
 
     //pull data user
-    refUser.onSnapshot(snapshot => {
+    const usersubscrib= refUser.onSnapshot(snapshot => {
       let tempDataArray = [];
       snapshot.forEach(doc => {
         tempDataArray = [
@@ -138,8 +138,11 @@ function Employee() {
 
     
     return () => {
+      usersubscrib()
+      quotasubscrib()
+      typeleavesubscrib()
     };
-  },[testt]);
+  },[]);
 
 
   const deleteHandle = async (uid) => {
@@ -262,7 +265,7 @@ function Employee() {
         <div className="content">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-lg-12">
+              <div className="col-lg-12" style={{height:'670px'}}>
                 <div className="card">
                   <div className="card-header ">
                     <div className="d-flex justify-content-between">
@@ -280,10 +283,6 @@ function Employee() {
                  ) : <MDBDataTableV5 hover entriesOptions={[5, 20, 25]}  entries={5} pagesAmount={4} data={datatable} searchTop searchBottom={false}/>
 
                 }
-                  
-                        
-                   
-                        
                   </div>
                 </div>
               </div>
@@ -381,5 +380,4 @@ function Employee() {
     </div>
   );
 }
-
 export default Employee;

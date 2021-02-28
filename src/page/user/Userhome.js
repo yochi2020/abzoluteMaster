@@ -124,7 +124,7 @@ const Userleave = () => {
 
 
       // เก็บค่า Leave
-      refLeave.onSnapshot(doc=>{
+      const leavesubscribe= refLeave.onSnapshot(doc=>{
         let tempArrayLeave=[]
         doc.forEach(data=>{
           tempArrayLeave=[
@@ -146,7 +146,7 @@ const Userleave = () => {
       setleaveUser(findLeave)   
       setDatatable({...datatable,rows:leaveUser})
      
-   
+      
    
     },[testt])
     const [test,setTest]=useState([])
@@ -223,7 +223,7 @@ const Userleave = () => {
         <div className="content">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-lg-12">
+              <div className="col-lg-12" style={{height:'670px'}}>
                 <div className="card">
                   <div className="card-header ">
                     <div className="d-flex justify-content-between">
@@ -231,7 +231,7 @@ const Userleave = () => {
                     </div>
                   </div>
                   <div className="card-body table-responsive ">
-                    <MDBDataTableV5 data={datatable} entriesOptions={[5, 20, 25]} entries={5} pagesAmount={4}/>
+                    <MDBDataTableV5  data={datatable} entriesOptions={[5, 20]} entries={5} pagesAmount={4} searchTop searchBottom={false}/>
 
                       {
                         loading ?(

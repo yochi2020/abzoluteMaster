@@ -6,7 +6,7 @@ const sendDisAllowed =  (req,res)=>{
         axios({
             method:'post',
             url:'https://notify-api.line.me/api/notify',
-            data:qs.stringify({ message: 'ไม่อนุมัติการลา  ของคุณ '+ req.params.name}),
+            data:qs.stringify({ message: 'ไม่อนุมัติการลา  ของคุณ '+ req.params.fullName}),
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Authorization':'Bearer saUKgFSkcrkTGOB9Oc6iiym8ZRcF6OJKEpuYUTAoC4F'
@@ -17,7 +17,7 @@ const sendDisAllowed =  (req,res)=>{
             axios({
                 method:'post',
                 url:'https://notify-api.line.me/api/notify',
-                data:qs.stringify({ message:  req.params.reson}),
+                data:qs.stringify({ message:  "หมายเหตุ "+req.params.reason}),
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'Authorization':'Bearer saUKgFSkcrkTGOB9Oc6iiym8ZRcF6OJKEpuYUTAoC4F'
@@ -33,7 +33,7 @@ const sendDisAllowed =  (req,res)=>{
         axios({
             method:'post',
             url:'https://notify-api.line.me/api/notify',
-            data:qs.stringify({ message: req.params.reson +"  คุณ "+ req.params.name}),
+            data:qs.stringify({ message: req.params.reason +"  คุณ "+ req.params.fullName}),
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 

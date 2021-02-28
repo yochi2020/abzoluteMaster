@@ -57,11 +57,11 @@ const Form = () => {
         e.preventDefault()    
         console.log(data)   
         axios.post("http://localhost:4000/register",data)
-        .then(async (result)=>{
+        .then((result)=>{
           
           if(!!result){
             const userRef =firestore.collection("user").doc(result.data.uid)
-                    const doc = await userRef.get();
+                    const doc =  userRef.get();
                     if(!doc.data()){
                          userRef.set({
                             uid:result.data.uid,

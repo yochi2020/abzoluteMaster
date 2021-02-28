@@ -28,6 +28,7 @@ const Admin = () => {
       setLoading(false)
     }));
     return () => {
+      unsubscribe()
     }
   },[ref])
   const addHandle = (obj) => {
@@ -91,16 +92,16 @@ const Admin = () => {
         <div className="content">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-lg-12">
-                <div className="card">
+              <div className="col-lg-12" style={{height:'670px'}}>
+                <div className="card" >
                   <div className="card-header ">
-                    <div className="d-flex justify-content-between">
+                    <div className="d-flex justify-content-between" >
                       <h3 className="m-0 text-dark">ประเภทการลา</h3>
                       <Form addData={addHandle} />
                     </div>
                   </div>
-                  <div className="card-body">
-                    <table className="table table-hover">
+                  <div className="card-body" >
+                    <table className="table table-hover" >
                       <thead className="thead-dark">
                         <tr>
                           <th scope="col">ชื่อประเภท</th>
