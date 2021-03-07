@@ -153,12 +153,10 @@ export default function Leavelist() {
         ]
       })
       setQuota(tempArrayQuota)
-
       setLoading(false)
     })
     reLoad()
     return (() => {
-      usersubscribe()
       appovesubscribe()
       leavesubscribe()
       typeleavesubscribe()
@@ -242,32 +240,43 @@ export default function Leavelist() {
  
 
   const appoveHandle = (obj, reason, fname, lname, name) => {
-    setLoading(true)
-    let fullName = fname + " " + lname + " " + " (" + name + " )";
-    console.log(fullName)
-    const reson = reason
+    // setLoading(true)
+    // let fullName = fname + " " + lname + " " + " (" + name + " )";
+    // console.log(fullName)
+    // const reson = reason
 
-    refUser.doc(auth.currentUser.uid).onSnapshot(doc_user => {
-      if (doc_user.data().user_group === 'hr') {
-        refAppove.doc(obj.appoveId).set({ ...obj, hr_appove: "อนุมัติ" })
-        if (obj.leave_appove === 'อนุมัติ') {
-          refAppove.doc(obj.appoveId).set({ ...obj, status: "y" })
-          axios.get("http://localhost:4000/allow/allow/" + reson + "/" + fullName)
-            .then((res) => {
-              console.log(res)
-            }).catch(err => console.log(err))
-        }
-      } else if (doc_user.data().user_group === 'admin') {
-        refAppove.doc(obj.appoveId).set({ ...obj, leave_appove: "อนุมัติ" })
-        if (obj.hr_appove === 'อนุมัติ') {
-          refAppove.doc(obj.appoveId).set({ ...obj, status: "y" })
-          axios.get("http://localhost:4000/allow/allow/" + reson + "/" + fullName)
-            .then((res) => {
-              console.log(res)
-            }).catch(err => console.log(err))
-        }
-      }
-    })
+    // refUser.doc(auth.currentUser.uid).onSnapshot(doc_user => {
+    //   if (doc_user.data().user_group === 'hr') {
+    //     refAppove.doc(obj.appoveId).set({ ...obj, hr_appove: "อนุมัติ" })
+    //     if (obj.leave_appove === 'อนุมัติ') {
+    //       refAppove.doc(obj.appoveId).set({ ...obj, status: "y" })
+            refLeave.doc(obj.leave_id)
+            .onSnapshot(doc=>{
+              refQuota.where("type_leave_id","==",doc.data().type_leave_id).where('uid','==',doc.data().uid)
+              .get()
+              .then(querySnapshot=>{
+                querySnapshot.forEach(data=>{
+                  console.log(data.data())
+                  
+                })
+              }).catch(err=>console.log(err))
+            })
+    //       axios.get("http://localhost:4000/allow/allow/" + reson + "/" + fullName)
+    //         .then((res) => {
+    //           console.log(res)
+    //         }).catch(err => console.log(err))
+    //     }
+    //   } else if (doc_user.data().user_group === 'admin') {
+    //     refAppove.doc(obj.appoveId).set({ ...obj, leave_appove: "อนุมัติ" })
+    //     if (obj.hr_appove === 'อนุมัติ') {
+    //       refAppove.doc(obj.appoveId).set({ ...obj, status: "y" })
+    //       axios.get("http://localhost:4000/allow/allow/" + reson + "/" + fullName)
+    //         .then((res) => {
+    //           console.log(res)
+    //         }).catch(err => console.log(err))
+    //     }
+    //   }
+    // })
   }
 
   const clickDeleteHandle = (dataAppove,deleteFname,deleteLname,deleteName) => {

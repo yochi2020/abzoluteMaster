@@ -20,7 +20,9 @@ admin.initializeApp({
       .then((result)=>{
         res.send(result)
         console.log("createuser success")
-      }).catch(err=>console.log(err))
+      }).catch(err=>{
+        console.log(err)
+      })
     // admin.auth().getUser("U1vsRxm6AfWQLSvj9i3mbisxpUo2")
     // .then((userRecord) => {
     //     // See the UserRecord reference doc for the contents of userRecord.
@@ -34,11 +36,12 @@ admin.initializeApp({
   }
 
   const deleteUser = (req,res)=>{
+    console.log(req.body)
     admin.auth()
-    .deleteUser(req.body.uid)
+    .deleteUser(req.body.id)
     .then(()=>{
       console.log("delete user success")
-      res.send(req.body.uid)
+      res.send(req.body.id)
     }).catch((err)=>{console.log(err)})
   }
 

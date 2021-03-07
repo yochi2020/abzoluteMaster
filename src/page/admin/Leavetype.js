@@ -13,7 +13,7 @@ const Admin = () => {
   const [dataleave, setDataleave] = useState([]);   //แสดงประเภทการลา
   const [loading, setLoading] = useState(true)
   useEffect(() => {
-    const unsubscribe = ref.onSnapshot((snapshot => {
+    ref.onSnapshot((snapshot => {
       let tempDataArray = [];
       snapshot.forEach(data => {
         tempDataArray = [
@@ -27,9 +27,7 @@ const Admin = () => {
       setDataleave(tempDataArray)
       setLoading(false)
     }));
-    return () => {
-      unsubscribe()
-    }
+    
   },[ref])
   const addHandle = (obj) => {
     let tempData = {
