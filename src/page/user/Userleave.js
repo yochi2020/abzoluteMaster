@@ -122,11 +122,6 @@ const Userleave = () => {
       setTypeLeave(() => tempArrayTypeLeave)
     })
     reload()
-    return () => {
-      unSubscribeLeaveOfUser()
-      unSubscribeAppove()
-      unSubscribeTypeLeave()
-    }
   }, [loading])
   const reload = () => {
     let tempArrayFindData = leaveOfUser

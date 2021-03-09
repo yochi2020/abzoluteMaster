@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { auth, firestore } from '../../../firebase/config'
-
 const Form = () => {
     const [data, setData] = useState({
         leave_date: "",
@@ -109,29 +108,50 @@ const Form = () => {
             uid: ""
         })
         document.getElementById("myDate").value=""
-        document.getElementById("myAmount").value=""
+        document.getElementById("myAmount").value=0
         document.getElementById("myReson").value=""
     }
 
     const submitData= async()=>{
-        clearData()
-        const myid =  Math.random(999).toString()
-        console.log(myid)
-        var obj= await  {
-            leave_id:myid,
-            leave_appove:"",
-            hr_appove:"",
-            leave_remark:"",
-            hr_remark:"",
-            status:"",
+        if(data.amount.match(/[0-9]/)===null){
+            alert("กรุณากรอก ตัวเลข")
+            console.log(data)
+            clearData()
+            return 
         }
-       await refLeave.doc(myid).set(data)
-             
-         refAppove.add(obj)
-        window.location.reload()
+        else if(parseInt(data.amount)>amount.max){
+            alert("กรุณาอย่าใส่เลขมากกว่าโควต้า")
+            return
+            clearData()
+        }if(data.reson===""){
+            alert("กรุณากรอกเหตุผล")
+            clearData()
+            return
+        }if(data.leave_start==""){
+            alert("กรุณาระบุวันลา")
+            clearData()
+            return
+        }else{
+            clearData()
+            const myid =  Math.random(999).toString()
+            console.log(myid)
+            var obj= await  {
+                leave_id:myid,
+                leave_appove:"",
+                hr_appove:"",
+                leave_remark:"",
+                hr_remark:"",
+                status:"",
+            }
+           await refLeave.doc(myid).set(data)
+                 
+            refAppove.add(obj)
+            window.location.reload()
+        }
+            
     }
 
-
+    
     return (
         <div>
             <div className="dropdown">
@@ -151,8 +171,8 @@ const Form = () => {
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title" id="exampleModalLabel"></h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true" onClick={()=>{clearData()}}>×</span>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={()=>{clearData()}}>
+                                <span aria-hidden="true" >×</span>
                             </button>
                         </div>
                         <div className="modal-body">
@@ -164,7 +184,7 @@ const Form = () => {
                                     </div>
                                     <div className="col-md-6">
                                         <label htmlFor="">จำนวนการลา</label>
-                                        <input id="myAmount"   type="number" min={amount.min} max={amount.max} onChange={(e)=>{setData({...data,amount:e.target.value})}} className="form-control" />
+                                        <input id="myAmount"   type="number"  defaultValue={0} min={amount.min} max={amount.max} onChange={(e)=>{setData({...data,amount:e.target.value})}} className="form-control" />
 
                                     </div>
                                 </div>

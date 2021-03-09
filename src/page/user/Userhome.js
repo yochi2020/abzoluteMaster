@@ -240,12 +240,8 @@ const Userleave = () => {
 
                       {
                         loading ?(
-                            <tr>
-                              <td></td>
-                              <td></td>
-                              <td><div className="spinner-border mx-auto" style={{width:"3rem",height:"3rem"}} role="status">
-                            </div></td>
-                            </tr>
+                            <div className="spinner-border mx-auto" style={{width:"3rem",height:"3rem"}} role="status">
+                            </div>
                         )
                         : <MDBDataTableV5  data={datatable} entriesOptions={[5, 20]} entries={5} pagesAmount={4} searchTop searchBottom={false}/>
 

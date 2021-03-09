@@ -59,7 +59,7 @@ const Summary = () => {
     ]
   });
   useEffect(()=>{
-    const usersubscribe =refUser.onSnapshot(doc=>{
+    refUser.onSnapshot(doc=>{
       let tempArrayUser=[]
       doc.forEach(data=>{
         tempArrayUser=[
@@ -76,8 +76,9 @@ const Summary = () => {
         ]
       })
       setUser(tempArrayUser)
+
     })
-    const appovescribe = refAppove.onSnapshot(doc=>{
+    refAppove.onSnapshot(doc=>{
       let tempArrayAppove =[]
       doc.forEach(data=>{
         tempArrayAppove=[
@@ -89,9 +90,10 @@ const Summary = () => {
         ]
       })
       setAppove(tempArrayAppove)
+      
     })
     //find all leave
-    const leavesubscribe =refLeave.onSnapshot(doc=>{
+    refLeave.onSnapshot(doc=>{
       let tempArrayLeave=[]
       doc.forEach(data=>{
         tempArrayLeave=[
@@ -109,7 +111,7 @@ const Summary = () => {
       })
       setLeave(tempArrayLeave)
     })
-    const leaveTypesubscribe =refLeaveType.onSnapshot(doc=>{
+    refLeaveType.onSnapshot(doc=>{
       let tempArrayLeaveType =[]
       doc.forEach( (data)=>{
         tempArrayLeaveType=[
@@ -121,22 +123,18 @@ const Summary = () => {
         ]
       })
        setLeaveType(tempArrayLeaveType)
-       setLoading(false)
+      setLoading(false)
+       
     })
     console.log('useEffect')
     reLoad()
-    return ()=>{
-      appovescribe()
-      leavesubscribe()
-      leaveTypesubscribe()
-      
-    }
+
   },[loading])
   
 
 
 const reLoad = ()=>{
-  console.log("reload")
+  
   let  tempArrayLeave =leave
   tempArrayLeave.forEach((dataLeave,i)=>{
       leaveType.forEach((dataLeaveType)=>{

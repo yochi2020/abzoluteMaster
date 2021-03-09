@@ -30,9 +30,7 @@ function Navbar() {
                 }
             }
         )
-        return ()=>{
-            authUnsubscibe()
-        }
+        
     })
     const signOutLogin=()=>{
         auth.signOut()
