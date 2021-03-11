@@ -80,7 +80,6 @@ const Login = () => {
       </form>
       {/* /.social-auth-links */}
       <p className="mb-1">
-        <Link to ="forgot-password.html">I forgot my password</Link>
       </p>
     </div>
     {/* /.login-card-body */}

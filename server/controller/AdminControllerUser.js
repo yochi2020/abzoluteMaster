@@ -45,4 +45,16 @@ admin.initializeApp({
     }).catch((err)=>{console.log(err)})
   }
 
-  module.exports ={registerUser,deleteUser}
+  const changeUser =(req,res)=>{
+    console.log(req.body)
+    admin.auth()
+    .updateUser(req.body.uid,{
+      email:req.body.email,
+    }).then((userRecord) => {
+      console.log('Successfully updated user', userRecord.toJSON());
+    }).catch((error) => {
+      console.log('Error updating user:', error);
+    });
+  }
+
+  module.exports ={registerUser,deleteUser,changeUser}

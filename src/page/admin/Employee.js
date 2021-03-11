@@ -142,6 +142,7 @@ export default function Employee() {
 
 
   const submitEditHandle = ()=>{
+    console.log("sss")
     test.forEach(dataChangeQuota=>{
       refQuota.doc(dataChangeQuota.quotaId).set({
         amount:dataChangeQuota.amount,
@@ -150,11 +151,11 @@ export default function Employee() {
       })
     })
     refUser.doc(dataEdit.uid).set(dataEdit)
+    
+      axios.post("http://localhost:4000/change",dataEdit)
+    
     setLoading(true)
   }
-
-
-
   const clickEditHandle = (data,uid) =>{
     refQuota.where("uid","==",uid)
     .onSnapshot(doc=>{
@@ -170,8 +171,6 @@ export default function Employee() {
           }
         ]
       })
-    
-      
       setQuotaOfUser(tempArrayQuotaUser)
       setDataEdit({...data,uid:uid})
     })
